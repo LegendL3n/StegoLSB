@@ -1,10 +1,12 @@
 package me.L3n.LSB;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class Main {
 
@@ -13,21 +15,33 @@ public class Main {
 		
 		System.out.print("Press E to encode or D to decode: ");
 		
-		char option = '\0';
+		char option;
 		
 		do {
 			option = scanner.nextLine().toUpperCase().charAt(0);
 		} while(!(option == 'E' || option == 'D'));
 		
 		boolean camouflage = (option == 'E');
-		
-		System.out.print("Enter the path of the image: ");
+
+		JFileChooser fileChooser = new JFileChooser() {
+			// Hack to bring the dialog above all other windows
+			@Override
+			protected JDialog createDialog(Component parent) throws HeadlessException {
+				// intercept the dialog created by JFileChooser
+				JDialog dialog = super.createDialog(parent);
+				dialog.setAlwaysOnTop(true);
+				return dialog;
+			}
+		};
+
+		fileChooser.setDialogTitle("Choose a file");
+		fileChooser.setMultiSelectionEnabled(false);
+		fileChooser.showOpenDialog(null);
+
+		File fileChosen = fileChooser.getSelectedFile();
+		BufferedImage img = ImageIO.read(fileChosen);
 
 		if (camouflage) {
-			String path = scanner.nextLine();
-
-			BufferedImage img = ImageIO.read(new File(path));
-
 			System.out.print("Enter desired message: ");
 
 			String msg = scanner.nextLine();
@@ -39,10 +53,10 @@ public class Main {
 			long finit = System.currentTimeMillis();
 
 			System.out.println("Camouflage finished.");
-			
 			System.out.println("Time taken was " + (finit - init) + "ms.");
 
-			String camouflagedPath = path.substring(0, path.lastIndexOf(".")) + "_camouflaged.png";
+			String filePath = fileChosen.getPath();
+			String camouflagedPath = filePath.substring(0, filePath.lastIndexOf(".")) + "_camouflaged.png";
 
 			ImageIO.write(img, "png", new File(camouflagedPath));
 
@@ -50,10 +64,6 @@ public class Main {
 
 			scanner.close();
 		} else {
-			String path = scanner.nextLine();
-
-			BufferedImage img = ImageIO.read(new File(path));
-
 			long init = System.currentTimeMillis();
 
 			String message = Stego.decode(img);
@@ -66,5 +76,4 @@ public class Main {
 			System.out.println("Time taken was " + (finit - init) + "ms.");
 		}
 	}
-
 }
