@@ -4,7 +4,7 @@ This is a Java version of the Lowest Significant Bit steganography technique.
 
 It demonstrates how to hide an ASCII text message inside an image, making it unnoticeable displaying it.
 
-Basically this works by changing an Image so that each pixel's LSB (of its RGB value) is equal to each bit the message.
+Basically this works by changing an Image so that each pixel's [LSB](https://www.computerhope.com/jargon/l/leastsb.htm "What is LSB") (of its RGB value) is equal to each bit the message.
 
 To know the length of the message when decoding, I chose to end the message with a null terminator, stopping when it
  encounters 8 zero-bit LSBs.
